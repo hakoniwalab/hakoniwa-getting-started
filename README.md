@@ -1,131 +1,150 @@
-# Hakoniwa — Getting Started
+# 箱庭 (Hakoniwa) — はじめよう
 
-> The entry point to the Hakoniwa simulation ecosystem.
-
-**Hakoniwa** is a reproducible, scalable, next-generation distributed simulation platform for robotics.  
-This repository is your starting point — it explains the ecosystem, shows how the pieces fit together, and walks you through your first working example.
+> 箱庭エコシステムへの入口
 
 ---
 
-## Why Hakoniwa?
+## あなたはこんな悩みを抱えていませんか？
 
-Traditional robotics simulation stacks tend to become monoliths:
+**ROSユーザー・MuJoCoユーザーへ**
 
-- tightly coupled dependencies
-- heavy environment setup
-- locked into a specific language or framework
+- MuJoCoの物理精度は最高だけど、ビジュアライズが弱い
+- GazeboはUbuntu前提で重い。セットアップだけで一日終わる
+- UnityはライセンスコストがかかりUnrealは重い。Godotを使いたいけどROSとの繋ぎ方がわからない
+- ROSのメッセージ型の資産は使いたいけど、ROS環境を毎回構築したくない
+- MuJoCoにアクチュエータやLiDAR・IMUのセンサーモデルを自分で実装するのはつらい
+- 複数のシミュレータを繋げたとき、時刻がずれて再現性が取れない
 
-Hakoniwa takes a different approach:
-
-- **Framework-independent** — works without ROS
-- **Micro-determinism** — all nodes share the same simulation clock, fully synchronized
-- **Separation of concerns** — loosely coupled modules you can mix and match
-
-The result is a simulation environment where C++, Python, Godot, and MuJoCo can all participate in the same timed world — connected only through PDU contracts and Hakoniwa Time.
+**これらは全て、箱庭で解決できます。**
 
 ---
 
-## The Ecosystem
+## 箱庭とは何か
+
+箱庭は「シミュレータ」ではありません。
+
+**シミュレータを作るためのプラットフォーム**です。
+
+MuJoCo、Godot、Python、C++——それぞれが得意な世界で動きながら、箱庭を介して一つのシミュレーション世界に繋がります。あなたが持っているROS資産（URDF・IDL）をそのまま活かしながら、ROSのインストールは不要です。
 
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│                Registry (Asset Casting)                      │
-│  xacro/URDF  →  hakoniwa-mbody-registry  →  URDF/MJCF/GLB  │
-└───────────────────────────┬─────────────────────────────────┘
-                            │
-              ┌─────────────▼──────────────┐
-              │     Core & PDU             │
-              │  Shared Memory             │
-              │  (Time / PDU)              │
-              └──────┬──────────┬──────────┘
-                     │          │
-       ┌─────────────▼──┐   ┌───▼──────────────────┐
-       │ Visualization  │   │ Physics               │
-       │ hakoniwa-godot │   │ hakoniwa-mujoco-robots│
-       │ Godot Project  │   │ MuJoCo + Hakoniwa PDU │
-       └────────────────┘   └──────────────────────┘
+あなたのURDF / ROS IDL
+        ↓
+    箱庭エコシステム
+        ↓
+MuJoCo（物理）＋ Godot（可視化）＋ Python（制御）
+     ↑ 全員が同じ時刻で動いている
 ```
 
-| Layer | Repository | Role |
+### 箱庭の時刻同期は数学的に保証されている
+
+ROSのclockには厳密な時刻保証がありません。複数のシミュレータを繋いだとき、時刻のズレは避けられません。
+
+箱庭は違います。どんなアセットのペア(i, j)を選んでも、シミュレーション時刻差は常に最大許容遅延時間 `d_max` 以内であることが数学的に証明されています。
+
+```
+|T_i(t) - T_j(t)| ≤ d_max　（任意の時刻 t において）
+```
+
+箱庭アセットとして参加するだけで、この保証が自動的についてきます。設定不要です。
+
+→ [時刻同期の数学的証明](https://github.com/hakoniwalab/hakoniwa-design-docs/blob/main/src/math/hakoniwa-time.md)
+
+---
+
+## このチュートリアルで体験できること
+
+このチュートリアルのゴールは、**TurtleBot3をゲームパッドで操作する**です。
+
+```text
+ゲームパッド（Python）
+      ↓ Twist コマンド（PDU）
+  MuJoCo（物理演算 / LiDAR）
+      ↓
+  Godot（3D可視化）
+      ↑ 全て箱庭時刻で同期
+```
+
+このたった一つの体験の中に、箱庭の真骨頂が全て詰まっています。
+
+**ここで学べること：**
+
+1. ROS資産（URDF・IDL）を、ROSなしで使う方法
+2. MuJoCoとGodotを設定ファイルだけで繋ぐ方法
+3. 時刻同期が「勝手についてくる」体験
+4. センサーモデル（LiDAR）がすでに用意されている安心感
+5. 「つなげることが、意外に簡単だ」という気づき
+
+---
+
+## 対応プラットフォーム
+
+| OS | 対応状況 |
+|---|---|
+| macOS (arm64) | ✅ |
+| Linux (x86_64) | ✅ |
+| Windows (x86_64 native) | ✅ |
+| Windows (WSL2) | ✅ |
+
+**必要なもの：PythonとC++バイナリのみ。ROSのインストール不要。**
+
+---
+
+## 箱庭エコシステムの全体像
+
+```text
+┌──────────────────────────────────────────────┐
+│           Registry（アセット鋳造）             │
+│  xacro/URDF → URDF / MJCF / GLB / Godotプロファイル  │
+│           hakoniwa-mbody-registry             │
+└─────────────────┬────────────────────────────┘
+                  │
+     ┌────────────▼────────────┐
+     │     Core & PDU          │
+     │  共有メモリ（時刻／PDU）  │
+     │   hakoniwa-core-pro     │
+     └──────┬──────────┬───────┘
+            │          │
+   ┌─────────▼──┐  ┌───▼────────────────┐
+   │ 可視化      │  │ 物理               │
+   │ hakoniwa-  │  │ hakoniwa-          │
+   │ godot      │  │ mujoco-robots      │
+   │ Godotで    │  │ アクチュエータ・     │
+   │ 3D描画     │  │ センサーモデル付き   │
+   └────────────┘  └────────────────────┘
+```
+
+| レイヤー | リポジトリ | 役割 |
 |---|---|---|
-| Registry | [hakoniwa-mbody-registry](https://github.com/hakoniwalab/hakoniwa-mbody-registry) | Convert xacro/URDF to URDF, MJCF, GLB, and Godot profiles |
-| Core & PDU | [hakoniwa-core-pro](https://github.com/hakoniwalab/hakoniwa-core-pro) | Simulation time master and asset lifecycle |
-| PDU | [hakoniwa-pdu-registry](https://github.com/hakoniwalab/hakoniwa-pdu-registry) | ROS IDL-based binary contract definitions |
-| PDU | [hakoniwa-pdu-endpoint](https://github.com/hakoniwalab/hakoniwa-pdu-endpoint) | Modular communication (SHM / Zenoh / MQTT / Storage) |
-| Visualization | [hakoniwa-godot](https://github.com/hakoniwalab/hakoniwa-godot) | Godot as a synchronized distributed simulation node |
-| Physics | [hakoniwa-mujoco-robots](https://github.com/hakoniwalab/hakoniwa-mujoco-robots) | High-fidelity rigid body physics via MuJoCo |
+| Registry | [hakoniwa-mbody-registry](https://github.com/hakoniwalab/hakoniwa-mbody-registry) | URDF→MJCF/GLB変換、Godotプロファイル生成 |
+| Core & PDU | [hakoniwa-core-pro](https://github.com/hakoniwalab/hakoniwa-core-pro) | 時刻同期エンジン |
+| PDU定義 | [hakoniwa-pdu-registry](https://github.com/hakoniwalab/hakoniwa-pdu-registry) | ROS IDLベースのデータ型定義 |
+| PDU通信 | [hakoniwa-pdu-endpoint](https://github.com/hakoniwalab/hakoniwa-pdu-endpoint) | SHM / Zenoh / MQTT / Storage |
+| 可視化 | [hakoniwa-godot](https://github.com/hakoniwalab/hakoniwa-godot) | GodotをPDUノードとして動かすaddon |
+| 物理 | [hakoniwa-mujoco-robots](https://github.com/hakoniwalab/hakoniwa-mujoco-robots) | MuJoCo + アクチュエータ・センサーモデル |
 
 ---
 
-## Core Concepts
+## チュートリアルを始める
 
-### Simulation Time
+*(準備中 — 近日公開)*
 
-Every node shares a single simulation clock managed by `hako-master`.  
-Nodes do not poll — they receive data asynchronously via event-driven callbacks.  
-This guarantees deterministic, reproducible runs.
+---
 
-### PDU — The Data Contract
+## もっと深く知りたい方へ
 
-A PDU (Protocol Data Unit) is the unit of communication between nodes.  
-Binary layout is derived from ROS 2 IDL (`.msg` / `.srv`) and committed as a versioned artifact.  
-The same layout is shared across C++, Python, GDScript, C#, and JavaScript — no per-build drift.
-
-### Endpoint — Modular Communication
-
-```text
-Endpoint = Cache + Comm + PDU_Def
-```
-
-| Cache Mode | Best for |
+| 知りたいこと | リンク |
 |---|---|
-| `latest` | UI updates, visualization |
-| `queue` | State transitions, control, logging |
-
-Transport (SHM / Zenoh / MQTT / Storage) is switched by JSON config — no code changes required.
-
----
-
-## Your First Example: TurtleBot3
-
-This example connects the full stack end-to-end:
-
-```text
-M-Body Asset (URDF/GLB)
-        │
-        ▼
-MuJoCo (Physics)  ──PDU──▶  PDU Endpoint  ──▶  Godot (Visualization)
-                                 ▲
-                    Python Controller (Gamepad / Twist)
-```
-
-- MuJoCo simulates rigid body physics and LiDAR point clouds with sensor noise
-- Python sends Twist commands via PDU
-- Godot renders the robot in sync with Hakoniwa Time
-
-> This is one combination. Hakoniwa is not limited to this stack.  
-> The same Core & PDU layer works with any language or physics engine you connect.
-
-*Step-by-step instructions coming soon.*
+| 箱庭の時刻同期の仕組み | [hakoniwa-core-pro](https://github.com/hakoniwalab/hakoniwa-core-pro) |
+| PDUシステムを理解したい | [hakoniwa-pdu-registry](https://github.com/hakoniwalab/hakoniwa-pdu-registry) |
+| ロボットモデルを追加したい | [hakoniwa-mbody-registry](https://github.com/hakoniwalab/hakoniwa-mbody-registry) |
+| GodotとROSを繋げたい | [hakoniwa-godot](https://github.com/hakoniwalab/hakoniwa-godot) |
+| ドローンシミュレーションをやりたい | [箱庭ドローンPRO](https://hakoniwa-lab.github.io) |
 
 ---
 
-## Where to Go Next
+## 開発・提供元
 
-| I want to... | Start here |
-|---|---|
-| Understand the PDU system | [hakoniwa-pdu-registry](https://github.com/hakoniwalab/hakoniwa-pdu-registry) |
-| Add a robot model | [hakoniwa-mbody-registry](https://github.com/hakoniwalab/hakoniwa-mbody-registry) |
-| Connect Godot | [hakoniwa-godot](https://github.com/hakoniwalab/hakoniwa-godot) |
-| Run physics simulation | [hakoniwa-mujoco-robots](https://github.com/hakoniwalab/hakoniwa-mujoco-robots) |
-| Understand time sync | [hakoniwa-core-pro](https://github.com/hakoniwalab/hakoniwa-core-pro) |
+[合同会社 箱庭ラボ](https://hakoniwa-lab.github.io)
 
----
-
-## Design Philosophy
-
-> "A deterministic simulation environment, uncompromised, in the hands of every robotics developer."
-
-- **Language Freedom** — Python (cffi), C# (Unity/Godot), C++ bindings. Write logic in the language you know.
-- **Auditability** — Full replay via Storage Comm. Deep inspection via `hako_pdu_storage_debug`.
-- **Modularity** — Pick only the components you need. No mandatory framework overhead.
+箱庭はオープンソースで開発されています。ビジネス利用・導入相談はお気軽にご連絡ください。
