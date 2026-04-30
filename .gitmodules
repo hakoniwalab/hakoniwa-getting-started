@@ -1,0 +1,9 @@
+[submodule "hakoniwa-mbody-registry"]
+	path = hakoniwa-mbody-registry
+	url = https://github.com/hakoniwalab/hakoniwa-mbody-registry.git
+[submodule "hakoniwa-godot"]
+	path = hakoniwa-godot
+	url = https://github.com/hakoniwalab/hakoniwa-godot.git
+[submodule "hakoniwa-mujoco-robots"]
+	path = hakoniwa-mujoco-robots
+	url = https://github.com/hakoniwalab/hakoniwa-mujoco-robots.git
