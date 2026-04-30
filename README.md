@@ -139,7 +139,7 @@ ROSのclockには厳密な時刻保証がありません。複数のシミュレ
 | PDUシステムを理解したい | [hakoniwa-pdu-registry](https://github.com/hakoniwalab/hakoniwa-pdu-registry) |
 | ロボットモデルを追加したい | [hakoniwa-mbody-registry](https://github.com/hakoniwalab/hakoniwa-mbody-registry) |
 | GodotとROSを繋げたい | [hakoniwa-godot](https://github.com/hakoniwalab/hakoniwa-godot) |
-| ドローンシミュレーションをやりたい | [箱庭ドローンPRO](https://hakoniwa-lab.github.io) |
+| ドローンシミュレーションをやりたい | [箱庭ドローン](https://github.com/toppers/hakoniwa-drone-core) |
 
 ---
 
