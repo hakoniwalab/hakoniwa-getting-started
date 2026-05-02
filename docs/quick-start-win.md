@@ -57,13 +57,13 @@ Python 3.12 を推奨します。
 ### 4-2. addons.zip を配置する
 
 [hakoniwa-godot のリリースページ](https://github.com/hakoniwalab/hakoniwa-godot/releases) から  
-**Windows 用の addons.zip** をダウンロードし、以下のディレクトリに解凍します。
+**Windows 用の addons-win.zip** をダウンロードし、以下のディレクトリに解凍します。
 
 ```text
 hakoniwa-getting-started/
 └── godot/
     └── tb3-viewer-template/   ← ここに解凍する
-        ├── addons/            ← addons.zip の中身
+        ├── addons/            ← addons-win.zip の中身
         └── ...
 ```
 
@@ -125,7 +125,7 @@ LiDAR のスキャン結果も画面上で確認できます。
 
 ## うまくいかない場合
 
-- Godot が起動しない → addons.zip の配置場所を確認してください
+- Godot が起動しない → addons-win.zip の配置場所を確認してください
 - ロボットが動かない → 箱庭コアが起動しているか確認してください
 - ゲームパッドが反応しない → コントローラの接続を確認してください
 
