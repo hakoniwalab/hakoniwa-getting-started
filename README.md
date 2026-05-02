@@ -131,7 +131,11 @@ ROSのclockは便利ですが、複数シミュレータ間の時刻差を常に
 
 この Getting Started では、まず `hakoniwa-mujoco-robots` と `hakoniwa-godot` を使い、TurtleBot3 を動かすところから始めます。各リポジトリの詳細は、動かした後で理解すれば十分です。
 
-*(準備中 — 近日公開)*
+MuJoCo で物理演算しているTurtleBot3 が、Godot の画面にリアルタイムで現れる。ゲームパッドを動かすと、Godot の中のロボットが動く。LiDAR のスキャンも可視化される。
+
+この「繋がった！」という瞬間が、箱庭の真骨頂です。
+
+→ [クイックスタート（Windows / WSL2）](docs/quick-start-win.md)
 
 ---
 
