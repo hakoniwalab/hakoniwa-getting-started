@@ -1,8 +1,8 @@
-# Windows向け: vcpkg / GLFW / Boost インストール手順
+# ソースからビルドする（開発者向け）— Windows
 
-このドキュメントでは、Windows native 環境で箱庭関連プロジェクトをビルドするために必要となる、vcpkg、GLFW、Boost のインストール手順を説明します。
+このドキュメントでは、Windows native 環境で箱庭関連プロジェクトをソースからビルドするために必要な、vcpkg・GLFW・Boost・hakoniwa-pdu-endpoint のセットアップ手順を説明します。
 
-> Note: 正式名称は `vcpkg` です。ファイル名は既存の命名に合わせて `tips-vpkg.md` としています。
+> 💡 ビルド不要でまず動かしたい方は [quick-start.md](./quick-start-win.md) を参照してください。
 
 ---
 
@@ -15,15 +15,17 @@
 | Git | vcpkg の取得に使用します |
 | Visual Studio 2022 / Build Tools | C++ ライブラリのビルドに使用します |
 | CMake | C/C++ プロジェクトのビルド設定に使用します |
+| Python 3.12 | Python バインディングのビルドに使用します |
 
 Visual Studio を使う場合は、インストーラで次のワークロードを有効にしてください。
 
 - C++ によるデスクトップ開発
 - Windows SDK
+- CMake tools for Windows
 
 ---
 
-## 2. vcpkg のインストール場所
+## 2. vcpkg のインストール
 
 この手順では、例として次の場所に vcpkg をインストールします。
 
@@ -33,31 +35,16 @@ C:\project\vcpkg
 
 別の場所にインストールしても構いません。その場合は、以降の `C:\project\vcpkg` を自分の環境に合わせて読み替えてください。
 
----
-
-## 3. vcpkg を取得する
-
-PowerShell を開き、次のコマンドを実行します。
+### 2-1. vcpkg を取得する
 
 ```powershell
 cd C:\project
 git clone https://github.com/microsoft/vcpkg.git
 cd vcpkg
-```
-
----
-
-## 4. vcpkg を初期化する
-
-次のコマンドで vcpkg を初期化します。
-
-```powershell
 .\bootstrap-vcpkg.bat
 ```
 
-成功すると、`vcpkg.exe` が作成されます。
-
-確認します。
+成功すると `vcpkg.exe` が作成されます。
 
 ```powershell
 .\vcpkg.exe version
@@ -65,18 +52,16 @@ cd vcpkg
 
 バージョン情報が表示されれば OK です。
 
----
+### 2-2. 環境変数を設定する
 
-## 5. 環境変数を設定する
-
-現在開いている PowerShell だけで使う場合は、次を実行します。
+現在開いている PowerShell だけで使う場合：
 
 ```powershell
 $env:VCPKG_ROOT = "C:\project\vcpkg"
 $env:Path += ";$env:VCPKG_ROOT"
 ```
 
-毎回設定したくない場合は、ユーザー環境変数として保存します。
+毎回設定したくない場合は、ユーザー環境変数として保存します：
 
 ```powershell
 setx VCPKG_ROOT "C:\project\vcpkg"
@@ -87,9 +72,9 @@ setx PATH "$env:PATH;C:\project\vcpkg"
 
 ---
 
-## 6. GLFW をインストールする
+## 3. GLFW をインストールする
 
-箱庭の MuJoCo viewer などで OpenGL window を使う場合、GLFW が必要になります。
+箱庭の MuJoCo viewer で OpenGL window を使うために必要です。
 
 ```powershell
 cd C:\project\vcpkg
@@ -98,37 +83,28 @@ cd C:\project\vcpkg
 
 ---
 
-## 7. Boost をインストールする
+## 4. Boost をインストールする
 
-Boost をまとめてインストールする場合は、次を実行します。
+Boost をまとめてインストールします：
 
 ```powershell
 cd C:\project\vcpkg
 .\vcpkg.exe install boost:x64-windows
 ```
 
-ただし、Boost 全体のインストールは時間がかかることがあります。
-必要なコンポーネントが分かっている場合は、個別にインストールする方法もあります。
+> Note: Boost 全体のインストールは時間がかかります。特に hakoniwa-pdu-endpoint では `boost-asio` と `boost-beast` が必要になることが多いです。個別にインストールする場合：
+>
+> ```powershell
+> .\vcpkg.exe install boost-asio:x64-windows
+> .\vcpkg.exe install boost-beast:x64-windows
+> .\vcpkg.exe install boost-filesystem:x64-windows
+> .\vcpkg.exe install boost-system:x64-windows
+> .\vcpkg.exe install boost-program-options:x64-windows
+> ```
 
-例:
-
-```powershell
-cd C:\project\vcpkg
-.\vcpkg.exe install boost-filesystem:x64-windows
-.\vcpkg.exe install boost-system:x64-windows
-.\vcpkg.exe install boost-program-options:x64-windows
-```
-
-箱庭関連のビルド手順で Boost 全体が必要な場合は、まず `boost:x64-windows` を使ってください。
-
----
-
-## 8. インストール済みパッケージを確認する
-
-次のコマンドで、vcpkg にインストール済みのパッケージを確認できます。
+インストール済みパッケージの確認：
 
 ```powershell
-cd C:\project\vcpkg
 .\vcpkg.exe list
 ```
 
@@ -136,16 +112,16 @@ cd C:\project\vcpkg
 
 ---
 
-## 9. CMake から vcpkg を使う
+## 5. CMake から vcpkg を使う
 
-CMake でビルドするときは、vcpkg の toolchain file を指定します。
+CMake でビルドするときは、vcpkg の toolchain file を指定します：
 
 ```powershell
 cmake -B build -S . `
   -DCMAKE_TOOLCHAIN_FILE=C:/project/vcpkg/scripts/buildsystems/vcpkg.cmake
 ```
 
-`VCPKG_ROOT` を設定している場合は、次のようにも書けます。
+`VCPKG_ROOT` を設定している場合：
 
 ```powershell
 cmake -B build -S . `
@@ -154,39 +130,119 @@ cmake -B build -S . `
 
 ---
 
-## 10. よくある注意点
+## 6. hakoniwa-pdu-endpoint のビルド
 
-### x64-windows を使う
-
-箱庭 Getting Started では、基本的に 64bit Windows を前提にします。
-そのため、vcpkg の triplet は `x64-windows` を使います。
+### 6-1. C++ コアのビルド
 
 ```powershell
-.\vcpkg.exe install glfw3:x64-windows
-.\vcpkg.exe install boost:x64-windows
+cmake -S . -B build-win `
+  -DCMAKE_TOOLCHAIN_FILE=C:/project/vcpkg/scripts/buildsystems/vcpkg.cmake `
+  -DVCPKG_TARGET_TRIPLET=x64-windows `
+  -A x64
+cmake --build build-win --config Release
 ```
 
-`x86-windows` と混ぜると、Visual Studio や CMake のビルド設定と合わず、リンクエラーになることがあります。
+### 6-2. Python バインディングのビルド
 
-### Visual Studio の C++ 環境が必要
+```powershell
+python -m pip install --upgrade pip setuptools wheel cffi
+.\build-python-win.ps1 `
+  -BuildNative `
+  -BuildFfi `
+  -BuildDirName build-win `
+  -Configuration Release `
+  -PythonCommand python `
+  -ToolchainFile C:\project\vcpkg\scripts\buildsystems\vcpkg.cmake `
+  -VcpkgTriplet x64-windows `
+  -Platform x64
+```
 
-vcpkg は C/C++ ライブラリをビルドするため、Visual Studio 2022 または Build Tools の C++ 環境が必要です。
+インストール後の確認：
 
-特に次が入っているか確認してください。
+```powershell
+python -c "from hakoniwa_pdu_endpoint import c_endpoint; print('import ok')"
+```
 
-- MSVC C++ compiler
-- Windows SDK
-- CMake tools for Windows
+### 6-3. prefix 配下にまとめてインストールする場合
 
-### PowerShell を開き直す
-
-`setx` で環境変数を設定した後は、新しい PowerShell を開き直してください。
-既に開いている PowerShell には反映されません。
+```powershell
+.\install-python-win.ps1 `
+  -BuildFirst `
+  -BuildDirName build-win `
+  -Configuration Release `
+  -PythonCommand python `
+  -Prefix C:\hakoniwa `
+  -ToolchainFile C:\project\vcpkg\scripts\buildsystems\vcpkg.cmake `
+  -VcpkgTriplet x64-windows `
+  -Platform x64
+$env:PYTHONPATH="C:\hakoniwa\share\hakoniwa-pdu-endpoint\python;$env:PYTHONPATH"
+```
 
 ---
 
-## 11. 参考情報
+## 7. hakoniwa-mujoco-robots のビルド
 
-- vcpkg official repository: https://github.com/microsoft/vcpkg
-- vcpkg documentation: https://learn.microsoft.com/vcpkg/
-- vcpkg package: glfw3: https://vcpkg.io/en/package/glfw3.html
+（手順準備中 — build.ps1 が確定次第追記します）
+
+---
+
+## Tips: よくある詰まりポイント
+
+### x64-windows を統一する
+
+箱庭 Getting Started では 64bit Windows を前提にします。vcpkg の triplet は必ず `x64-windows` を使ってください。`x86-windows` と混在するとリンクエラーになります。
+
+### 既存の build ディレクトリが残っている
+
+```
+generator platform: x64 ... used previously
+```
+
+というエラーが出た場合は、既存の build ディレクトリを削除してから再実行してください。
+
+```powershell
+Remove-Item -Recurse -Force build-win
+```
+
+### `setx` 後は PowerShell を開き直す
+
+`setx` で環境変数を設定した後は、新しい PowerShell を開き直してください。既に開いている PowerShell には反映されません。
+
+### Python: `cffi` と `_cffi_backend` の Version mismatch
+
+ビルド時に別の Python 環境の `PYTHONPATH` が混入しています。ビルド時は `PYTHONPATH` を明示的に空にしてください。
+
+### Python: `BoostConfig.cmake` が見つからない
+
+vcpkg で `boost-asio:x64-windows` と `boost-beast:x64-windows` を入れ、`-ToolchainFile`・`-VcpkgTriplet`・`-Platform x64` を必ず渡してください。
+
+### Python: 実行時に `hakoniwa_pdu_endpoint.dll` が見つからない
+
+環境変数を設定してください：
+
+```powershell
+$env:HAKO_PDU_ENDPOINT_SHARED_LIB = "C:\hakoniwa\bin\hakoniwa_pdu_endpoint.dll"
+```
+
+または：
+
+```powershell
+$env:HAKO_PDU_ENDPOINT_LIB_DIR = "C:\hakoniwa\bin"
+```
+
+### Python: install 後も import できない
+
+install 先を `PYTHONPATH` に追加してください：
+
+```powershell
+$env:PYTHONPATH="C:\hakoniwa\share\hakoniwa-pdu-endpoint\python;$env:PYTHONPATH"
+```
+
+---
+
+## 参考情報
+
+- [vcpkg 公式リポジトリ](https://github.com/microsoft/vcpkg)
+- [vcpkg ドキュメント](https://learn.microsoft.com/vcpkg/)
+- [hakoniwa-pdu-endpoint](https://github.com/hakoniwalab/hakoniwa-pdu-endpoint)
+- [hakoniwa-mujoco-robots](https://github.com/hakoniwalab/hakoniwa-mujoco-robots)
