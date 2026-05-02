@@ -17,7 +17,7 @@
 
 hakowin のインストーラを使って、箱庭コア機能を Windows にインストールします。
 
-→ [hakoCoreInstaller の手順](https://github.com/buildko89/documents/blob/main/hakodoc/wininstall-doc/coreinstall.md)
+→ [hakoCoreInstaller の手順](https://github.com/buildko89/hakowin)
 
 インストール後、WSL2 から箱庭コアのコマンドが使えることを確認してください。
 
