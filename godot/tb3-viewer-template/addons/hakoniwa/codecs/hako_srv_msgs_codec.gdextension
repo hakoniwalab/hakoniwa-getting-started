@@ -1,0 +1,13 @@
+[configuration]
+
+entry_symbol = "hako_srv_msgs_codec_library_init"
+compatibility_minimum = "4.5"
+
+[libraries]
+
+macos.debug = "res://addons/hakoniwa/codecs/hako_srv_msgs_codec.dylib"
+macos.release = "res://addons/hakoniwa/codecs/hako_srv_msgs_codec.dylib"
+windows.debug.x86_64 = "res://addons/hakoniwa/codecs/hako_srv_msgs_codec.dll"
+windows.release.x86_64 = "res://addons/hakoniwa/codecs/hako_srv_msgs_codec.dll"
+linux.debug.x86_64 = "res://addons/hakoniwa/codecs/hako_srv_msgs_codec.so"
+linux.release.x86_64 = "res://addons/hakoniwa/codecs/hako_srv_msgs_codec.so"

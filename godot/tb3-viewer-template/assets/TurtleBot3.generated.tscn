@@ -1,0 +1,81 @@
+[gd_scene format=3 uid="uid://2ir5eqme3has"]
+
+[ext_resource type="PackedScene" uid="uid://corm48a0l7e2g" path="res://assets/parts/base_link.glb" id="1_base_link"]
+[ext_resource type="PackedScene" uid="uid://ced88pfqmlvrf" path="res://assets/parts/wheel_left_link.glb" id="2_wheel_left_link"]
+[ext_resource type="PackedScene" uid="uid://dahou4rcisu8k" path="res://assets/parts/wheel_right_link.glb" id="3_wheel_right_link"]
+[ext_resource type="PackedScene" uid="uid://ce50su2jkbca5" path="res://assets/parts/base_scan.glb" id="4_base_scan"]
+[ext_resource type="Script" uid="uid://c82jes3nfv5sw" path="res://assets/tb3_reference_sync.gd" id="5_sync"]
+[ext_resource type="Script" uid="uid://byjgxwb5vyoep" path="res://addons/hakoniwa/scripts/hakoniwa_simulation_node.gd" id="6_r8spy"]
+[ext_resource type="Script" uid="uid://4l3tnryuisrl" path="res://addons/hakoniwa/scripts/hakoniwa_codec_node.gd" id="7_4pki5"]
+
+[sub_resource type="Environment" id="Environment_default"]
+background_mode = 2
+sky_custom_fov = 45.0
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.18
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_csd54"]
+
+[node name="turtlebot3_burger" type="Node3D" unique_id=412369128]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=176973136]
+environment = SubResource("Environment_default")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1192211429]
+transform = Transform3D(0.51161605, -0.50731343, 0.6934567, 0.12739968, 0.8429516, 0.52268726, -0.8497167, -0.17906901, 0.49589914, 0, 0.5482025, -1.2304721)
+light_energy = 0.95
+light_indirect_energy = 0.2
+shadow_enabled = true
+
+[node name="HakoSync" type="Node" parent="." unique_id=2015903400]
+script = ExtResource("5_sync")
+profile_path = "res://config/robot_sync.profile.json"
+
+[node name="RosToGodot" type="Node3D" parent="." unique_id=2032115281]
+transform = Transform3D(0, -1, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0)
+
+[node name="Visuals" type="Node3D" parent="RosToGodot" unique_id=2108375386]
+
+[node name="base_link" type="Node3D" parent="RosToGodot/Visuals" unique_id=41402290]
+
+[node name="model" parent="RosToGodot/Visuals/base_link" unique_id=612582143 instance=ExtResource("1_base_link")]
+
+[node name="wheel_left_link" type="Node3D" parent="RosToGodot/Visuals/base_link" unique_id=1915299003]
+transform = Transform3D(1, 0, 0, 0, 0.00079734717, 0.9999997, 0, -0.9999997, 0.00079734717, 0, 0.08, 0.023)
+
+[node name="model" parent="RosToGodot/Visuals/base_link/wheel_left_link" unique_id=675207561 instance=ExtResource("2_wheel_left_link")]
+
+[node name="wheel_right_link" type="Node3D" parent="RosToGodot/Visuals/base_link" unique_id=1723869491]
+transform = Transform3D(1, 0, 0, 0, 0.00079734717, 0.9999997, 0, -0.9999997, 0.00079734717, 0, -0.08, 0.023)
+
+[node name="model" parent="RosToGodot/Visuals/base_link/wheel_right_link" unique_id=1572254134 instance=ExtResource("3_wheel_right_link")]
+
+[node name="base_scan" type="Node3D" parent="RosToGodot/Visuals/base_link" unique_id=514192565]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.032, 0, 0.172)
+
+[node name="model" parent="RosToGodot/Visuals/base_link/base_scan" unique_id=1068098110 instance=ExtResource("4_base_scan")]
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=506769342]
+transform = Transform3D(0.46329603, 0, 0.8862036, 0, 1, 0, -0.8862036, 0, 0.46329603, 0.347, 0.138, 0.037)
+
+[node name="Ground" type="Node3D" parent="." unique_id=1424721442]
+transform = Transform3D(20, 0, 0, 0, 20, 0, 0, 0, 20, 0, -0.0021769702, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground" unique_id=1482048959]
+mesh = SubResource("PlaneMesh_csd54")
+
+[node name="HakoniwaSimNode" type="Node" parent="." unique_id=968398526]
+script = ExtResource("6_r8spy")
+asset_name = "GodotTB3"
+use_internal_shm_endpoint = true
+shm_endpoint_config_path = "res://config/endpoint_shm_poll_with_pdu.json"
+codec_node_path = NodePath("../HakoniwaCodecNode")
+auto_initialize_on_ready = true
+auto_tick_on_physics_process = true
+enable_physics_time_sync = true
+metadata/_custom_type_script = "uid://byjgxwb5vyoep"
+
+[node name="HakoniwaCodecNode" type="Node" parent="." unique_id=794086978]
+script = ExtResource("7_4pki5")
+metadata/_custom_type_script = "uid://4l3tnryuisrl"
