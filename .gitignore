@@ -34,6 +34,7 @@ dist/
 *.egg-info/
 .eggs/
 *.egg
+*.import
 MANIFEST
 
 # =========================
