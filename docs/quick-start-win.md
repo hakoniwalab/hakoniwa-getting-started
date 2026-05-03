@@ -19,6 +19,34 @@ hakowin のインストーラを使って、箱庭コア機能を Windows にイ
 
 → [Windows版箱庭コア機能のインストール手順](https://github.com/buildko89/hakowin)
 
+なお、本インストールでは、RAMDISK を利用しない方法でセットアップすることも可能です。
+
+その場合は、Cドライブ直下に project ディレクトリを作成し、mmap ディレクトリをその中に作成してください。
+
+```text
+C:\project
+└── mmap
+```
+
+そして、`cpp_core_config.json` の `core_mmap_path` を `C:\project\mmap` に変更してください。
+
+```json
+cpp_core_config.json 
+{
+    "shm_type": "mmap",
+    "core_mmap_path": "C:¥¥project¥¥mmap",
+    "asset_timeout_usec": 600000000
+}
+```
+
+`cpp_core_config.json` の場所は、環境変数 `HAKO_CONFIG_PATH` で確認できます。
+
+```powershell
+$env:HAKO_CONFIG_PATH
+```
+
+### インストールチェック内容
+
 インストール後、WSL2 から箱庭コアのコマンドが使えることを確認してください。
 
 ```powershell
@@ -32,6 +60,19 @@ Usage:
 
   -h, --help     Print usage
   -v, --version  Print version
+```
+
+また、Python 3.12 であることを確認してください。
+
+```bash
+python --version
+Python 3.12.3
+```
+
+`PYTHONPATH` に箱庭コアの Python バインディングが含まれていることも確認してください。
+
+```powershell
+$env:PYTHONPATH
 ```
 
 ---
@@ -71,15 +112,8 @@ cd hakoniwa-getting-started
 
 PowerShell で hakoniwa-getting-started ディレクトリに移動し、次のコマンドを実行して Python 環境をセットアップします。
 
-```bash
+```powershell
 pip install -r hakoniwa-mbody-registry/requirements.txt 
-```
-
-Python 3.12 であることを確認してください。
-
-```bash
-python --version
-Python 3.12.3
 ```
 
 ---
@@ -163,7 +197,7 @@ bash tb3_demo.bash
 ※ゲームパッド、LiDARビジュアライザー、箱庭コア機能、コンダクター等も同時に起動されます。
 
 
-### 6-3. Godot シーンを起動
+### 6-2. Godot シーンを起動
 
 Godot の再生ボタンを押してシーンを起動します。
 
@@ -197,4 +231,3 @@ LiDAR のスキャン結果も画面上で確認できます。
 
 - [自分のロボットを追加する](./add-your-robot.md)（hakoniwa-mbody-registry を使う）
 - [ソースからビルドする](./option-build-from-source.md)（開発者向け）
-- [ドローンシミュレーションを試す](https://github.com/toppers/hakoniwa-drone-core)
