@@ -9,7 +9,7 @@
 
 - Windows 10 / 11
 - WSL2 がインストール済みであること
-- PS4 / PS5 コントローラ（USB または Bluetooth）
+- PS4 / PS5 コントローラ（USB または Bluetooth）がパソコンに接続されていること
 
 ---
 
