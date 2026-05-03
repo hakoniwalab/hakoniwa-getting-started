@@ -1,0 +1,30 @@
+Step 13 comparison summary
+
+Exact matches:
+- config/robot_sync.profile.json
+- config/endpoint_shm_poll_with_pdu.json
+
+Substantive match with non-functional differences:
+- config/comm/tb3-pdutypes.json
+  - content matches
+  - formatting differs (spaces/tabs)
+- assets/tb3_reference_sync.gd
+  - functionally equivalent
+  - generated version adds get_node_or_null guard before setting sim_node_path
+
+Substantive mismatch still remaining:
+- assets/TurtleBot3.generated.tscn
+  - major runtime structure now matches expected design
+  - remaining differences:
+    - CameraRig / Camera3D intentionally omitted by current spec
+    - uid / unique_id / editable path fields not reproduced
+    - some node transforms are emitted as position/rotation instead of Transform3D
+    - metadata custom type values use resource paths instead of template uid literals
+- config/comm/tb3-pdudef-compact.json
+  - generated staged file still contains `path: "pdutypes.json"`
+  - template expects `path: "tb3-pdutypes.json"`
+  - this is a remaining naming/staging mismatch
+
+GLB parts:
+- filenames match the template set
+- content-level binary comparison not performed in this step

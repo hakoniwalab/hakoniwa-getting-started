@@ -1,0 +1,18 @@
+Step 8 viewer model result
+
+Command:
+/Users/tmori/project/oss/hakoniwa-getting-started/work/venv/bin/python tools/hako_viewer_model_gen.py bodies/turtlebot3/config/viewer.recipe.yaml -o bodies/turtlebot3/view/turtlebot3.json --pretty
+
+Workdir:
+/Users/tmori/project/oss/hakoniwa-mbody-registry
+
+Result:
+- Success
+- Output: ../hakoniwa-mbody-registry/bodies/turtlebot3/view/turtlebot3.json
+
+Observation:
+- Viewer model contains assets for base_link, wheel_left_link, wheel_right_link, and base_scan.
+- Viewer model does not contain caster_back_link.
+- This matches the current viewer.recipe.yaml, which lists only `base_scan` under fixed_bodies.
+- Template verification showed that `godot/tb3-viewer-template/assets/TurtleBot3.generated.tscn` also does not reference caster_back_link.
+- Conclusion: this is not a bug for the current reproduction target. The parts directory contains an unused GLB file.

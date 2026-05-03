@@ -1,0 +1,21 @@
+Step 14 issue handling summary
+
+Fixed in ../hakoniwa-mbody-registry:
+- tools/godot_sync2endpoint.py relative comm path handling
+- bodies/turtlebot3/config/godot_sync.yaml endpoint.comm_path
+- tools/hako_godot_scene_gen.py redesigned to support godot_scene.yaml, HakoSync wrapper generation, optional SimNode/CodecNode, template-compatible paths, and default materials
+- docs/spec/godot-scene-spec.md added
+- bodies/turtlebot3/config/godot_scene.yaml added
+
+Classified as spec / non-bug:
+- assets/parts/caster_back_link.glb may be generated but unused by the scene
+- CameraRig / Camera3D are intentionally excluded from generator scope in v0.1
+- uid / unique_id / editable path differences in .tscn are editor/generated metadata, not functional mismatches
+- sync script null-guard addition is an intentional robustness improvement
+
+Remaining non-functional differences:
+- assets/TurtleBot3.generated.tscn still differs textually from the template because of omitted editor-specific ids and transform serialization style
+- config/comm/tb3-pdutypes.json and config/comm/tb3-pdudef-compact.json differ only in formatting style
+
+Open documentation gap:
+- docs/add-your-robot.md still describes canonical generated names such as pdu_def.json / endpoint_shm_with_pdu.json and does not yet explain the staging step needed to produce template-side names such as tb3-pdudef-compact.json / endpoint_shm_poll_with_pdu.json

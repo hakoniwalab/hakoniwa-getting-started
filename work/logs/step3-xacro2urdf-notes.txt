@@ -1,0 +1,16 @@
+Step 3 xacro2urdf result
+
+Command:
+/Users/tmori/project/oss/hakoniwa-getting-started/work/venv/bin/python tools/xacro2urdf.py bodies/turtlebot3/source/turtlebot3_description/urdf/turtlebot3_burger.urdf
+
+Workdir:
+/Users/tmori/project/oss/hakoniwa-mbody-registry
+
+Result:
+- Success
+- Output: ../hakoniwa-mbody-registry/bodies/turtlebot3/generated/turtlebot3_burger.urdf
+
+Observation:
+- xacro tags were expanded successfully.
+- The generated URDF still contains package:// mesh references.
+- This is acceptable only if later tools resolve package:// correctly.

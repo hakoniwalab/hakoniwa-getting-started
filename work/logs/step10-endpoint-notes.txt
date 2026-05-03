@@ -1,0 +1,23 @@
+Step 10 endpoint generation result
+
+Command:
+/Users/tmori/project/oss/hakoniwa-getting-started/work/venv/bin/python tools/godot_sync2endpoint.py bodies/turtlebot3/config/godot_sync.yaml
+
+Workdir:
+/Users/tmori/project/oss/hakoniwa-mbody-registry
+
+Initial finding:
+- Generated endpoint had path mismatches versus the template.
+- Root causes were:
+  1. tools/godot_sync2endpoint.py rewrote comm_path relative to the source config location.
+  2. bodies/turtlebot3/config/godot_sync.yaml used `../comm/shm_poll_comm.json`, but there is no bodies/turtlebot3/comm directory and the template expects `comm/shm_poll_comm.json`.
+
+Fixes applied in ../hakoniwa-mbody-registry:
+- tools/godot_sync2endpoint.py: preserve relative comm_path as-is, matching pdu_def_path handling.
+- bodies/turtlebot3/config/godot_sync.yaml: changed endpoint.comm_path to `comm/shm_poll_comm.json`.
+
+Result after fix:
+- Staged output at work/godot/tb3-viewer-template/config/endpoint_shm_poll_with_pdu.json matches the template exactly when generated with:
+  --pdu-def-path comm/tb3-pdudef-compact.json
+- Default generated file remains named endpoint_shm_with_pdu.json and uses pdu_def_path `pdu_def.json`.
+- The remaining difference from the template is naming/staging convention, not endpoint schema content.

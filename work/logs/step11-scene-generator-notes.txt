@@ -1,0 +1,23 @@
+Step 11 scene generator redesign
+
+Changes applied in ../hakoniwa-mbody-registry:
+- Added docs/spec/godot-scene-spec.md
+- Added bodies/turtlebot3/config/godot_scene.yaml
+- Reworked tools/hako_godot_scene_gen.py to read godot_scene.yaml
+- HakoSync wrapper script is now generated as a robot_sync_controller-based script
+- Optional HakoniwaSimNode / HakoniwaCodecNode generation is supported from scene config
+- Scene asset/config paths now follow the tb3-viewer-template layout
+- Default material overrides are generated for TB3 core visual assets
+- Environment, light, ground, and RosToGodot transform are now template-compatible defaults
+
+Current comparison status against godot/tb3-viewer-template/assets/TurtleBot3.generated.tscn:
+- Major runtime structure mismatch is resolved
+- Remaining differences are mostly:
+  - no CameraRig / Camera3D by design
+  - no uid/unique_id/editor-specific fields
+  - node transform serialization differs in some places (position/rotation vs Transform3D)
+  - metadata custom type values use resource paths instead of template uid strings
+
+Current comparison status against tb3_reference_sync.gd:
+- Functional match with one intentional robustness improvement:
+  - generated script checks get_node_or_null("../HakoniwaSimNode") before setting sim_node_path

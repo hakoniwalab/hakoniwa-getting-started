@@ -1,0 +1,123 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/parts/base_link.glb" id="1_base_link"]
+[ext_resource type="PackedScene" path="res://assets/parts/wheel_left_link.glb" id="2_wheel_left_link"]
+[ext_resource type="PackedScene" path="res://assets/parts/wheel_right_link.glb" id="3_wheel_right_link"]
+[ext_resource type="PackedScene" path="res://assets/parts/base_scan.glb" id="4_base_scan"]
+[ext_resource type="Script" path="res://assets/tb3_reference_sync.gd" id="5_sync"]
+[ext_resource type="Script" path="res://addons/hakoniwa/scripts/hakoniwa_simulation_node.gd" id="6_r8spy"]
+[ext_resource type="Script" path="res://addons/hakoniwa/scripts/hakoniwa_codec_node.gd" id="7__4pki5"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4pki5"]
+sky_top_color = Color(0.09670233, 0.15326172, 0.99999994, 1)
+sky_horizon_color = Color(0.6141338, 0.75738144, 0.9939726, 1)
+ground_bottom_color = Color(0.39721388, 0.34378844, 0.28378502, 1)
+ground_horizon_color = Color(0.44069412, 0.62142915, 0.9144665, 1)
+
+[sub_resource type="Sky" id="Sky_jorao"]
+sky_material = SubResource("ProceduralSkyMaterial_4pki5")
+process_mode = 1
+
+[sub_resource type="Environment" id="Environment_default"]
+background_mode = 2
+sky = SubResource("Sky_jorao")
+sky_custom_fov = 45.0
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.25
+ssao_enabled = true
+ssao_radius = 0.8
+ssao_intensity = 0.5
+ssao_detail = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4pki5"]
+albedo_color = Color(0.2509804, 0.2509804, 0.2509804, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jorao"]
+albedo_color = Color(0.0627451, 0.0627451, 0.0627451, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3oxhj"]
+albedo_color = Color(0.0627451, 0.0627451, 0.0627451, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p6uxh"]
+albedo_color = Color(0.36094868, 0.36094868, 0.36094865, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_csd54"]
+size = Vector2(20, 20)
+
+[node name="turtlebot3_burger" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_default")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.8034194, -0.47907954, 0.35355332, 0.105737455, 0.69915634, 0.70710677, -0.5859495, -0.53071946, 0.61237246, 0, 0.5482025, -1.7023231)
+light_energy = 0.909
+light_indirect_energy = 0.2
+shadow_enabled = true
+
+[node name="HakoSync" type="Node" parent="."]
+script = ExtResource("5_sync")
+profile_path = "res://config/robot_sync.profile.json"
+
+[node name="RosToGodot" type="Node3D" parent="."]
+transform = Transform3D(0, -1, 0, 0, 0, 1, -1, 0, 0, 0, 0.16596496, 0)
+
+[node name="Visuals" type="Node3D" parent="RosToGodot"]
+
+[node name="base_link" type="Node3D" parent="RosToGodot/Visuals"]
+
+[node name="model" parent="RosToGodot/Visuals/base_link" instance=ExtResource("1_base_link")]
+
+[node name="base_link_visual_0" parent="RosToGodot/Visuals/base_link/model/base_link" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_4pki5")
+
+[node name="wheel_left_link" type="Node3D" parent="RosToGodot/Visuals/base_link"]
+position = Vector3(0, 0.08, 0.023)
+rotation = Vector3(-1.569999, 0, 0)
+
+[node name="model" parent="RosToGodot/Visuals/base_link/wheel_left_link" instance=ExtResource("2_wheel_left_link")]
+
+[node name="wheel_left_link_visual_0" parent="RosToGodot/Visuals/base_link/wheel_left_link/model/wheel_left_link" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_jorao")
+
+[node name="wheel_right_link" type="Node3D" parent="RosToGodot/Visuals/base_link"]
+position = Vector3(0, -0.08, 0.023)
+rotation = Vector3(-1.569999, 0, 0)
+
+[node name="model" parent="RosToGodot/Visuals/base_link/wheel_right_link" instance=ExtResource("3_wheel_right_link")]
+
+[node name="wheel_right_link_visual_0" parent="RosToGodot/Visuals/base_link/wheel_right_link/model/wheel_right_link" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_3oxhj")
+
+[node name="base_scan" type="Node3D" parent="RosToGodot/Visuals/base_link"]
+position = Vector3(-0.032, 0, 0.172)
+rotation = Vector3(0, 0, 0)
+
+[node name="model" parent="RosToGodot/Visuals/base_link/base_scan" instance=ExtResource("4_base_scan")]
+
+[node name="base_scan_visual_0" parent="RosToGodot/Visuals/base_link/base_scan/model/base_scan" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_p6uxh")
+
+[node name="Ground" type="Node3D" parent="."]
+transform = Transform3D(20, 0, 0, 0, 20, 0, 0, 0, 20, 0, -0.0021769702, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00034930857, 0.007932744, 0.0012831822)
+mesh = SubResource("PlaneMesh_csd54")
+
+[node name="HakoniwaSimNode" type="Node" parent="."]
+script = ExtResource("6_r8spy")
+asset_name = "GodotTB3"
+use_internal_shm_endpoint = true
+shm_endpoint_config_path = "res://config/endpoint_shm_poll_with_pdu.json"
+codec_node_path = NodePath("../HakoniwaCodecNode")
+auto_initialize_on_ready = true
+auto_tick_on_physics_process = true
+enable_physics_time_sync = true
+metadata/_custom_type_script = "res://addons/hakoniwa/scripts/hakoniwa_simulation_node.gd"
+
+[node name="HakoniwaCodecNode" type="Node" parent="."]
+script = ExtResource("7__4pki5")
+metadata/_custom_type_script = "res://addons/hakoniwa/scripts/hakoniwa_codec_node.gd"

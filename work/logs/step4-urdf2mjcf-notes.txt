@@ -1,0 +1,16 @@
+Step 4 urdf2mjcf result
+
+Command:
+/Users/tmori/project/oss/hakoniwa-getting-started/work/venv/bin/python tools/urdf2mjcf.py bodies/turtlebot3/generated/turtlebot3_burger.urdf
+
+Workdir:
+/Users/tmori/project/oss/hakoniwa-mbody-registry
+
+Result:
+- Success
+- Output: ../hakoniwa-mbody-registry/bodies/turtlebot3/generated/turtlebot3_burger.xml
+
+Observation:
+- package:// mesh references were resolved into absolute filesystem paths in MJCF.
+- Expected joints are present: wheel_left_joint, wheel_right_joint.
+- No immediate conversion error was observed.

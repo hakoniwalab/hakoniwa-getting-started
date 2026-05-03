@@ -1,0 +1,14 @@
+Step 9 robot sync profile result
+
+Command:
+/Users/tmori/project/oss/hakoniwa-getting-started/work/venv/bin/python tools/godot_sync2profile.py bodies/turtlebot3/config/godot_sync.yaml bodies/turtlebot3/view/turtlebot3.json
+
+Workdir:
+/Users/tmori/project/oss/hakoniwa-mbody-registry
+
+Result:
+- Success
+- Output: ../hakoniwa-mbody-registry/bodies/turtlebot3/generated/godot/robot_sync.profile.json
+
+Comparison against template:
+- Exact match with godot/tb3-viewer-template/config/robot_sync.profile.json

@@ -1,0 +1,22 @@
+Step 6 urdf2glb result
+
+Command:
+/Users/tmori/project/oss/hakoniwa-getting-started/work/venv/bin/python tools/urdf2glb.py bodies/turtlebot3/generated/turtlebot3_burger.urdf --parts-dir bodies/turtlebot3/generated/parts
+
+Workdir:
+/Users/tmori/project/oss/hakoniwa-mbody-registry
+
+Result:
+- Success
+- Output dir: ../hakoniwa-mbody-registry/bodies/turtlebot3/generated/parts
+- Generated files:
+  - base_link.glb
+  - base_scan.glb
+  - caster_back_link.glb
+  - wheel_left_link.glb
+  - wheel_right_link.glb
+
+Observation:
+- Generated filenames match the template's part names.
+- The tool output message did not mention caster_back_link.glb even though the file was actually generated.
+- This looks like a logging/output inconsistency in ../hakoniwa-mbody-registry/tools/urdf2glb.py, not a conversion failure.
