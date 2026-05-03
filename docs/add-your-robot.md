@@ -2,7 +2,17 @@
 
 このドキュメントでは、TurtleBot3（TB3）を例に、xacro ファイルから Godot で動かせるアセット一式を生成する手順を説明します。
 
-> 💡 この手順は `hakoniwa-mbody-registry` を使います。`hakoniwa-getting-started` をリポジトリを `--recursive` で clone 済みであれば、すでに手元にあります。
+> 💡 この手順は `hakoniwa-mbody-registry` を使います。`hakoniwa-getting-started` を `--recursive` で clone 済みであれば、すでに手元にあります。
+
+---
+
+## はじめに
+
+このドキュメントのステップ数は多めです。これは意図的です。
+
+箱庭はロボットの種類や構成に応じて、異なるツールを組み合わせてシミュレーション資産を生成します。各ステップを細かく刻んであるのは、どのステップが何を変換しているかを明示し、将来的な自動化やカスタマイズの足がかりにするためです。現時点では、このフローはまだ試行段階にあります。
+
+各ステップには「なぜこれが必要か」を添えています。一度通しで動かした後、自分のロボットに合わせてカスタマイズする際の参考にしてください。
 
 ---
 
@@ -49,7 +59,7 @@ pip install -r requirements.txt
 
 ## Step 1: ロボット定義を取得する
 
-TB3 の場合は、upstream から sparse fetch します。
+**なぜ？** ROS 環境なしで upstream のロボット定義ファイルを取得するためです。`fetch.py` は sparse checkout を使って必要なファイルだけを取得します。ROS をインストールしなくても、GitHub 上の URDF / xacro ファイルを直接取得できます。
 
 ```bash
 python3 tools/fetch.py sources/tb3.yaml
@@ -57,9 +67,13 @@ python3 tools/fetch.py sources/tb3.yaml
 
 取得先：`bodies/turtlebot3/source/`
 
+`sources/tb3.yaml` には、どのリポジトリのどのパスを取得するかが定義されています。自分のロボットを追加する場合は、このファイルを参考に新しい YAML を作成します。
+
 ---
 
 ## Step 2: xacro → plain URDF
+
+**なぜ？** xacro は ROS のマクロ言語であり、そのままでは他のツールが読めません。`xacro2urdf.py` は ROS なしで xacro を展開し、標準的な plain URDF に変換します。これにより、下流の変換ツールが URDF を入力として扱えるようになります。
 
 ```bash
 python3 tools/xacro2urdf.py \
@@ -72,6 +86,8 @@ python3 tools/xacro2urdf.py \
 
 ## Step 3: URDF → MJCF
 
+**なぜ？** MuJoCo は独自の XML フォーマット（MJCF）を使います。`urdf2mjcf.py` は MuJoCo の公式コンパイラを使って URDF を MJCF に変換します。MJCF は MuJoCo の高精度な剛体物理演算の入力となります。URDF のままでは MuJoCo で動かせません。
+
 ```bash
 python3 tools/urdf2mjcf.py \
   bodies/turtlebot3/generated/turtlebot3_burger.urdf
@@ -83,7 +99,7 @@ python3 tools/urdf2mjcf.py \
 
 ## Step 4: アクチュエータを追加する
 
-`bodies/turtlebot3/config/actuators.yaml` を使ってアクチュエータ定義を追加します。
+**なぜ？** 標準の URDF / MJCF はロボットの形状と関節構造を定義しますが、モーターなどの制御入力（アクチュエータ）は含みません。`mjcf_add_actuators.py` は YAML で定義したアクチュエータを MJCF に追加します。これにより、MuJoCo からモーターへの制御入力が可能になります。
 
 ```bash
 python3 tools/mjcf_add_actuators.py \
@@ -116,12 +132,12 @@ actuators:
 
 ## Step 5: GLB アセットを生成する（パーツ分割）
 
-Godot 用に、ボディごとに分割した GLB ファイルを生成します。
+**なぜ？** Godot でロボットの各パーツを個別に動かすには、ボディごとに分割された 3D アセットが必要です。`urdf2glb.py` は URDF のビジュアルジオメトリをボディ単位で GLB ファイルに変換します。Godot はこれらの GLB をシーン内で各関節ノードに割り当てて描画します。
 
 ```bash
 python3 tools/urdf2glb.py \
-    bodies/turtlebot3/source/turtlebot3_burger.urdf \
-    --parts-dir bodies/turtlebot3/generated/parts
+  bodies/turtlebot3/source/turtlebot3_burger.urdf \
+  --parts-dir bodies/turtlebot3/generated/parts
 ```
 
 出力：`bodies/turtlebot3/generated/parts/*.glb`
@@ -130,7 +146,7 @@ python3 tools/urdf2glb.py \
 
 ## Step 6: PDU 定義を生成する
 
-`bodies/turtlebot3/config/pdu-manifest.yaml` から PDU 定義を生成します。
+**なぜ？** 箱庭では、ノード間のデータ通信は PDU（Protocol Data Unit）という契約で定義されます。`pdu-manifest.yaml` は「このロボットがどんなデータを送受信するか」を 1 つのファイルで定義します。ここから Godot・MuJoCo・Python が共通して参照する PDU 型定義ファイルを生成します。ROS のメッセージ型をそのまま使えるので、ROS の資産を活かせます。
 
 ```bash
 python3 tools/pdu_manifest2types.py \
@@ -187,6 +203,8 @@ extras:
 
 ### 7-1. viewer model JSON を生成する
 
+**なぜ？** Godot シーンを自動生成するには、ロボットの構造（どのボディがどの親子関係にあるか、どの GLB を使うか）を記述した中間データが必要です。`viewer.recipe.yaml` はその構造を定義し、`hako_viewer_model_gen.py` が MJCF と組み合わせて viewer model JSON を生成します。
+
 ```bash
 python3 tools/hako_viewer_model_gen.py \
   bodies/turtlebot3/config/viewer.recipe.yaml \
@@ -195,6 +213,8 @@ python3 tools/hako_viewer_model_gen.py \
 ```
 
 ### 7-2. Godot シーン (.tscn) を生成する
+
+**なぜ？** Godot のシーンファイル（.tscn）を手書きするのは大変です。`hako_godot_scene_gen.py` は viewer model JSON から Godot が読めるシーンファイルを自動生成します。ロボットの構造が変わっても、このステップを再実行するだけでシーンを更新できます。
 
 ```bash
 python3 tools/hako_godot_scene_gen.py \
@@ -206,12 +226,16 @@ python3 tools/hako_godot_scene_gen.py \
 
 ### 7-3. Godot endpoint 設定を生成する
 
+**なぜ？** Godot が箱庭の共有メモリ（PDU）を読み書きするには、どの PDU チャンネルをどの通信方式で扱うかを設定したエンドポイント設定ファイルが必要です。`godot_sync.yaml` の定義からこの設定を自動生成します。
+
 ```bash
 python3 tools/godot_sync2endpoint.py \
   bodies/turtlebot3/config/godot_sync.yaml
 ```
 
 ### 7-4. robot sync profile を生成する
+
+**なぜ？** Godot のシーン内でロボットの各ノードを PDU データと紐づけるには、「このノードはこの PDU チャンネルのこのフィールドに対応する」というマッピングが必要です。`robot_sync.profile.json` がその役割を担います。
 
 ```bash
 python3 tools/godot_sync2profile.py \
@@ -222,6 +246,8 @@ python3 tools/godot_sync2profile.py \
 ---
 
 ## Step 8: Godot プロジェクトへ配置する
+
+**なぜ？** 生成したアセットを Godot プロジェクトの所定の場所に配置することで、Godot がシーン起動時にこれらを読み込めるようになります。
 
 ```bash
 export GODOT_PROJECT_DIR=/mnt/c/project/hakoniwa-getting-started/godot/tb3-viewer-template
