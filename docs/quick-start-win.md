@@ -17,16 +17,43 @@
 
 hakowin のインストーラを使って、箱庭コア機能を Windows にインストールします。
 
-→ [hakoCoreInstaller の手順](https://github.com/buildko89/hakowin)
+→ [Windows版箱庭コア機能のインストール手順](https://github.com/buildko89/hakowin)
 
 インストール後、WSL2 から箱庭コアのコマンドが使えることを確認してください。
+
+```powershell
+hako-cmd.exe
+```
+
+```bash
+Hakoniwa command-line tool
+Usage:
+  hako-cmd [command] [options] positional parameters
+
+  -h, --help     Print usage
+  -v, --version  Print version
+```
 
 ---
 
 ## Step 2: このリポジトリを clone する
 
+本チュートリアルでは、Cドライブ直下に project ディレクトリを作り、その中にリポジトリを clone することを推奨します。
+
+```bash
+cd /mnt/c
+```
+```bash
+mkdir project
+```
+```bash
+cd project
+```
+
 ```bash
 git clone --recursive https://github.com/hakoniwalab/hakoniwa-getting-started.git
+```
+```bash
 cd hakoniwa-getting-started
 ```
 
@@ -40,8 +67,10 @@ cd hakoniwa-getting-started
 
 ## Step 3: Python 環境のセットアップ
 
+PowerShell で hakoniwa-getting-started ディレクトリに移動し、次のコマンドを実行して Python 環境をセットアップします。
+
 ```bash
-pip install hakoniwa-pdu
+pip install -r hakoniwa-mbody-registry/requirements.txt 
 ```
 
 Python 3.12 を推奨します。
@@ -53,6 +82,8 @@ Python 3.12 を推奨します。
 ### 4-1. Godot v4.6.1 をダウンロード
 
 [Godot 公式サイト](https://godotengine.org/) から **v4.6.1** をダウンロードしてください。
+
+※ 2026/5/3 時点で、v4.6.2 でも動作することを確認しています。
 
 ### 4-2. addons.zip を配置する
 
@@ -70,6 +101,10 @@ hakoniwa-getting-started/
 ### 4-3. Godot でプロジェクトを開く
 
 Godot を起動し、`godot/tb3-viewer-template/project.godot` を開きます。
+
+成功すると、Godot のエディタ画面が表示されます。
+
+![Godot Editor](/docs/images/godot-editor-opened.png)
 
 ---
 
@@ -89,37 +124,44 @@ hakoniwa-getting-started/
 
 ## Step 6: シミュレーションを起動する
 
-以下の順番で起動します。
+WSL2上で、以下の順番で起動します。
 
-### 6-1. 箱庭コアを起動
+### 6-1. TurtleBot3 シミュレーションを起動
 
-```bash
-# WSL2 から
-（コマンド準備中）
-```
-
-### 6-2. TurtleBot3 シミュレーションを起動
+TB3シミュレーション実行ディレクトリへ移動します。
 
 ```bash
-# WSL2 から
-（コマンド準備中）
+cd hakoniwa-mujoco-robots
 ```
+
+TB3シミュレーションを起動します。
+
+```bash
+bash tb3_demo.bash
+```
+
+成功すると、MuJoCoのウィンドウが表示されます。
+
+※ゲームパッド、LiDARビジュアライザー、箱庭コア機能、コンダクター等も同時に起動されます。
+
 
 ### 6-3. Godot シーンを起動
 
 Godot の再生ボタンを押してシーンを起動します。
 
+※ MuJoCo のウィンドウが表示された直後に Godot の再生ボタンを押下してください。
+
 ---
 
 ## Step 7: ゲームパッドで操作する
 
-```bash
-# WSL2 から
-（コマンド準備中）
-```
-
 ゲームパッドのスティックを動かすと、Godot 上の TurtleBot3 が動きます。  
 LiDAR のスキャン結果も画面上で確認できます。
+
+- 左スティック：
+  - 左右：旋回
+- 右スティック：
+  - 上下：前進 / 後退
 
 ---
 
