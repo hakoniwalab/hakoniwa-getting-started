@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://c82jes3nfv5sw" path="res://assets/tb3_reference_sync.gd" id="5_sync"]
 [ext_resource type="Script" uid="uid://byjgxwb5vyoep" path="res://addons/hakoniwa/scripts/hakoniwa_simulation_node.gd" id="6_r8spy"]
 [ext_resource type="Script" uid="uid://4l3tnryuisrl" path="res://addons/hakoniwa/scripts/hakoniwa_codec_node.gd" id="7_4pki5"]
+[ext_resource type="Script" uid="uid://1fs7k60l4prr" path="res://assets/camera_rig.gd" id="8_jorao"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4pki5"]
 sky_top_color = Color(0.09670233, 0.15326172, 0.99999994, 1)
@@ -26,10 +27,9 @@ ambient_light_source = 2
 ambient_light_color = Color(1, 1, 1, 1)
 ambient_light_energy = 0.25
 ssao_enabled = true
-ssao_radius = 2.0
-ssao_intensity = 1.0
-ssao_power = 2.5
-ssao_detail = 1.0
+ssao_radius = 0.8
+ssao_intensity = 0.5
+ssao_detail = 0.3
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4pki5"]
 albedo_color = Color(0.2509804, 0.2509804, 0.2509804, 1)
@@ -42,8 +42,7 @@ albedo_color = Color(0.0627451, 0.0627451, 0.0627451, 1)
 albedo_color = Color(0.0627451, 0.0627451, 0.0627451, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p6uxh"]
-albedo_color = Color(0.38928655, 0.38928664, 0.3892865, 1)
-roughness = 0.5
+albedo_color = Color(0.36094868, 0.36094868, 0.36094865, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_csd54"]
 size = Vector2(20, 20)
@@ -64,7 +63,7 @@ script = ExtResource("5_sync")
 profile_path = "res://config/robot_sync.profile.json"
 
 [node name="RosToGodot" type="Node3D" parent="." unique_id=2032115281]
-transform = Transform3D(0, -1, 0, 0, 0, 1, -1, 0, 0, 0, 0.008059144, 0)
+transform = Transform3D(0, -1, 0, 0, 0, 1, -1, 0, 0, 0, 0.16596496, 0)
 
 [node name="Visuals" type="Node3D" parent="RosToGodot" unique_id=2108375386]
 
@@ -92,20 +91,18 @@ transform = Transform3D(1, 0, 0, 0, 0.00079734717, 0.9999997, 0, -0.9999997, 0.0
 surface_material_override/0 = SubResource("StandardMaterial3D_3oxhj")
 
 [node name="base_scan" type="Node3D" parent="RosToGodot/Visuals/base_link" unique_id=514192565]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.032, 0, 0.172)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.032, 0, 0.17199999)
 
 [node name="model" parent="RosToGodot/Visuals/base_link/base_scan" unique_id=1722372714 instance=ExtResource("4_base_scan")]
 
 [node name="base_scan_visual_0" parent="RosToGodot/Visuals/base_link/base_scan/model/base_scan" parent_id_path=PackedInt32Array(1722372714, 1667992460) index="0" unique_id=304205152]
 surface_material_override/0 = SubResource("StandardMaterial3D_p6uxh")
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=506769342]
-transform = Transform3D(0.46329603, 0, 0.8862036, 0, 1, 0, -0.8862036, 0, 0.46329603, 0.347, 0.138, 0.037)
-
 [node name="Ground" type="Node3D" parent="." unique_id=1424721442]
 transform = Transform3D(20, 0, 0, 0, 20, 0, 0, 0, 20, 0, -0.0021769702, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Ground" unique_id=1482048959]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00034930857, 0.007932744, 0.0012831822)
 mesh = SubResource("PlaneMesh_csd54")
 
 [node name="HakoniwaSimNode" type="Node" parent="." unique_id=968398526]
@@ -122,6 +119,13 @@ metadata/_custom_type_script = "uid://byjgxwb5vyoep"
 [node name="HakoniwaCodecNode" type="Node" parent="." unique_id=794086978]
 script = ExtResource("7_4pki5")
 metadata/_custom_type_script = "uid://4l3tnryuisrl"
+
+[node name="CameraRig" type="Node3D" parent="." unique_id=897934569]
+script = ExtResource("8_jorao")
+camera_path = NodePath("Camera3D")
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig" unique_id=506769342]
+transform = Transform3D(0.46329603, 0, 0.8862036, 0, 1, 0, -0.8862036, 0, 0.46329603, 0.347, 0.138, 0.037)
 
 [editable path="RosToGodot/Visuals/base_link/model"]
 [editable path="RosToGodot/Visuals/base_link/wheel_left_link/model"]
