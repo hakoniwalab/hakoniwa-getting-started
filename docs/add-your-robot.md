@@ -302,7 +302,7 @@ extras:
 
 ## Step 7: Godot 向けアセットを生成する
 
-Godot 向けには、主に以下の 3 種類の成果物を生成します。
+Godot 向けには、主に以下の成果物を生成します。
 
 * Godot シーン
 * robot sync profile
@@ -472,6 +472,7 @@ cp -f bodies/turtlebot3/generated/pdu_def.json \
   * `config/comm/tb3-pdudef-compact.json`
   * `config/endpoint_shm_poll_with_pdu.json`
 * `config/comm/shm_poll_comm.json` と `config/cache/buffer.json` は静的 project-side asset です。現在は generator で生成していないため、テンプレート側から用意してください
+* `config/cache/` を作成しても `buffer.json` 自体は自動生成されません。TB3 テンプレートを複製して使う場合は、テンプレート側に含まれる `config/cache/buffer.json` をそのまま利用してください
 
 ### 8-1. CameraRig を手動で追加する
 
