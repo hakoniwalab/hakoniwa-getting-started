@@ -8,14 +8,45 @@
 [ext_resource type="Script" uid="uid://byjgxwb5vyoep" path="res://addons/hakoniwa/scripts/hakoniwa_simulation_node.gd" id="6_r8spy"]
 [ext_resource type="Script" uid="uid://4l3tnryuisrl" path="res://addons/hakoniwa/scripts/hakoniwa_codec_node.gd" id="7_4pki5"]
 
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4pki5"]
+sky_top_color = Color(0.09670233, 0.15326172, 0.99999994, 1)
+sky_horizon_color = Color(0.6141338, 0.75738144, 0.9939726, 1)
+ground_bottom_color = Color(0.39721388, 0.34378844, 0.28378502, 1)
+ground_horizon_color = Color(0.44069412, 0.62142915, 0.9144665, 1)
+
+[sub_resource type="Sky" id="Sky_jorao"]
+sky_material = SubResource("ProceduralSkyMaterial_4pki5")
+process_mode = 1
+
 [sub_resource type="Environment" id="Environment_default"]
 background_mode = 2
+sky = SubResource("Sky_jorao")
 sky_custom_fov = 45.0
 ambient_light_source = 2
 ambient_light_color = Color(1, 1, 1, 1)
-ambient_light_energy = 0.18
+ambient_light_energy = 0.25
+ssao_enabled = true
+ssao_radius = 2.0
+ssao_intensity = 1.0
+ssao_power = 2.5
+ssao_detail = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4pki5"]
+albedo_color = Color(0.2509804, 0.2509804, 0.2509804, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jorao"]
+albedo_color = Color(0.0627451, 0.0627451, 0.0627451, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3oxhj"]
+albedo_color = Color(0.0627451, 0.0627451, 0.0627451, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p6uxh"]
+albedo_color = Color(0.38928655, 0.38928664, 0.3892865, 1)
+roughness = 0.5
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_csd54"]
+size = Vector2(20, 20)
 
 [node name="turtlebot3_burger" type="Node3D" unique_id=412369128]
 
@@ -23,8 +54,8 @@ ambient_light_energy = 0.18
 environment = SubResource("Environment_default")
 
 [node name="Sun" type="DirectionalLight3D" parent="." unique_id=1192211429]
-transform = Transform3D(0.51161605, -0.50731343, 0.6934567, 0.12739968, 0.8429516, 0.52268726, -0.8497167, -0.17906901, 0.49589914, 0, 0.5482025, -1.2304721)
-light_energy = 0.95
+transform = Transform3D(0.8034194, -0.47907954, 0.35355332, 0.105737455, 0.69915634, 0.70710677, -0.5859495, -0.53071946, 0.61237246, 0, 0.5482025, -1.7023231)
+light_energy = 0.909
 light_indirect_energy = 0.2
 shadow_enabled = true
 
@@ -33,28 +64,40 @@ script = ExtResource("5_sync")
 profile_path = "res://config/robot_sync.profile.json"
 
 [node name="RosToGodot" type="Node3D" parent="." unique_id=2032115281]
-transform = Transform3D(0, -1, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0)
+transform = Transform3D(0, -1, 0, 0, 0, 1, -1, 0, 0, 0, 0.008059144, 0)
 
 [node name="Visuals" type="Node3D" parent="RosToGodot" unique_id=2108375386]
 
 [node name="base_link" type="Node3D" parent="RosToGodot/Visuals" unique_id=41402290]
 
-[node name="model" parent="RosToGodot/Visuals/base_link" unique_id=612582143 instance=ExtResource("1_base_link")]
+[node name="model" parent="RosToGodot/Visuals/base_link" unique_id=1599799686 instance=ExtResource("1_base_link")]
+
+[node name="base_link_visual_0" parent="RosToGodot/Visuals/base_link/model/base_link" parent_id_path=PackedInt32Array(1599799686, 1404861096) index="0" unique_id=1188365923]
+surface_material_override/0 = SubResource("StandardMaterial3D_4pki5")
 
 [node name="wheel_left_link" type="Node3D" parent="RosToGodot/Visuals/base_link" unique_id=1915299003]
 transform = Transform3D(1, 0, 0, 0, 0.00079734717, 0.9999997, 0, -0.9999997, 0.00079734717, 0, 0.08, 0.023)
 
-[node name="model" parent="RosToGodot/Visuals/base_link/wheel_left_link" unique_id=675207561 instance=ExtResource("2_wheel_left_link")]
+[node name="model" parent="RosToGodot/Visuals/base_link/wheel_left_link" unique_id=318364339 instance=ExtResource("2_wheel_left_link")]
+
+[node name="wheel_left_link_visual_0" parent="RosToGodot/Visuals/base_link/wheel_left_link/model/wheel_left_link" parent_id_path=PackedInt32Array(318364339, 1310033482) index="0" unique_id=155700724]
+surface_material_override/0 = SubResource("StandardMaterial3D_jorao")
 
 [node name="wheel_right_link" type="Node3D" parent="RosToGodot/Visuals/base_link" unique_id=1723869491]
 transform = Transform3D(1, 0, 0, 0, 0.00079734717, 0.9999997, 0, -0.9999997, 0.00079734717, 0, -0.08, 0.023)
 
-[node name="model" parent="RosToGodot/Visuals/base_link/wheel_right_link" unique_id=1572254134 instance=ExtResource("3_wheel_right_link")]
+[node name="model" parent="RosToGodot/Visuals/base_link/wheel_right_link" unique_id=2098130766 instance=ExtResource("3_wheel_right_link")]
+
+[node name="wheel_right_link_visual_0" parent="RosToGodot/Visuals/base_link/wheel_right_link/model/wheel_right_link" parent_id_path=PackedInt32Array(2098130766, 2023516285) index="0" unique_id=1685092502]
+surface_material_override/0 = SubResource("StandardMaterial3D_3oxhj")
 
 [node name="base_scan" type="Node3D" parent="RosToGodot/Visuals/base_link" unique_id=514192565]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.032, 0, 0.172)
 
-[node name="model" parent="RosToGodot/Visuals/base_link/base_scan" unique_id=1068098110 instance=ExtResource("4_base_scan")]
+[node name="model" parent="RosToGodot/Visuals/base_link/base_scan" unique_id=1722372714 instance=ExtResource("4_base_scan")]
+
+[node name="base_scan_visual_0" parent="RosToGodot/Visuals/base_link/base_scan/model/base_scan" parent_id_path=PackedInt32Array(1722372714, 1667992460) index="0" unique_id=304205152]
+surface_material_override/0 = SubResource("StandardMaterial3D_p6uxh")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=506769342]
 transform = Transform3D(0.46329603, 0, 0.8862036, 0, 1, 0, -0.8862036, 0, 0.46329603, 0.347, 0.138, 0.037)
@@ -79,3 +122,8 @@ metadata/_custom_type_script = "uid://byjgxwb5vyoep"
 [node name="HakoniwaCodecNode" type="Node" parent="." unique_id=794086978]
 script = ExtResource("7_4pki5")
 metadata/_custom_type_script = "uid://4l3tnryuisrl"
+
+[editable path="RosToGodot/Visuals/base_link/model"]
+[editable path="RosToGodot/Visuals/base_link/wheel_left_link/model"]
+[editable path="RosToGodot/Visuals/base_link/wheel_right_link/model"]
+[editable path="RosToGodot/Visuals/base_link/base_scan/model"]
