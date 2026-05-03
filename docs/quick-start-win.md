@@ -113,7 +113,8 @@ cd hakoniwa-getting-started
 PowerShell で hakoniwa-getting-started ディレクトリに移動し、次のコマンドを実行して Python 環境をセットアップします。
 
 ```powershell
-pip install -r hakoniwa-mbody-registry/requirements.txt 
+cd C:\project\hakoniwa-getting-started
+pip install -r hakoniwa-mbody-registry/requirements.txt
 ```
 
 ---
