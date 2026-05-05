@@ -1,6 +1,6 @@
-# 開発環境のセットアップ — vcpkg / GLFW / Boost / hakoniwa-pdu-endpoint（Windows）
+# 開発環境のセットアップ — vcpkg / GLFW / Boost（Windows）
 
-このドキュメントでは、Windows native 環境で箱庭関連プロジェクトをソースからビルドするために必要な、vcpkg・GLFW・Boost・hakoniwa-pdu-endpoint のセットアップ手順を説明します。
+このドキュメントでは、Windows native 環境で箱庭関連プロジェクトをソースからビルドするために必要な、vcpkg・GLFW・Boost のセットアップ手順を説明します。
 
 > 💡 ビルド不要でまず動かしたい方は [quick-start-win.md](./quick-start-win.md) を参照してください。
 
@@ -130,59 +130,12 @@ cmake -B build -S . `
 
 ---
 
-## 6. hakoniwa-pdu-endpoint のビルド
+## 6. 次のステップ
 
-### 6-1. C++ コアのビルド
+依存ライブラリのセットアップが完了したら、実際のビルド手順は以下を参照してください。
 
-```powershell
-cmake -S . -B build-win `
-  -DCMAKE_TOOLCHAIN_FILE=C:/project/vcpkg/scripts/buildsystems/vcpkg.cmake `
-  -DVCPKG_TARGET_TRIPLET=x64-windows `
-  -A x64
-cmake --build build-win --config Release
-```
-
-### 6-2. Python バインディングのビルド
-
-```powershell
-python -m pip install --upgrade pip setuptools wheel cffi
-.\build-python-win.ps1 `
-  -BuildNative `
-  -BuildFfi `
-  -BuildDirName build-win `
-  -Configuration Release `
-  -PythonCommand python `
-  -ToolchainFile C:\project\vcpkg\scripts\buildsystems\vcpkg.cmake `
-  -VcpkgTriplet x64-windows `
-  -Platform x64
-```
-
-インストール後の確認：
-
-```powershell
-python -c "from hakoniwa_pdu_endpoint import c_endpoint; print('import ok')"
-```
-
-### 6-3. prefix 配下にまとめてインストールする場合
-
-```powershell
-.\install-python-win.ps1 `
-  -BuildFirst `
-  -BuildDirName build-win `
-  -Configuration Release `
-  -PythonCommand python `
-  -Prefix C:\hakoniwa `
-  -ToolchainFile C:\project\vcpkg\scripts\buildsystems\vcpkg.cmake `
-  -VcpkgTriplet x64-windows `
-  -Platform x64
-$env:PYTHONPATH="C:\hakoniwa\share\hakoniwa-pdu-endpoint\python;$env:PYTHONPATH"
-```
-
----
-
-## 7. hakoniwa-mujoco-robots のビルド
-
-（手順準備中 — build.ps1 が確定次第追記します）
+- `hakoniwa-godot` addons と `hakoniwa-mujoco-robots` TB3 のビルド
+  - [option-build-from-source.md](./option-build-from-source.md)
 
 ---
 
@@ -208,35 +161,9 @@ Remove-Item -Recurse -Force build-win
 
 `setx` で環境変数を設定した後は、新しい PowerShell を開き直してください。既に開いている PowerShell には反映されません。
 
-### Python: `cffi` と `_cffi_backend` の Version mismatch
+### `BoostConfig.cmake` が見つからない
 
-ビルド時に別の Python 環境の `PYTHONPATH` が混入しています。ビルド時は `PYTHONPATH` を明示的に空にしてください。
-
-### Python: `BoostConfig.cmake` が見つからない
-
-vcpkg で `boost-asio:x64-windows` と `boost-beast:x64-windows` を入れ、`-ToolchainFile`・`-VcpkgTriplet`・`-Platform x64` を必ず渡してください。
-
-### Python: 実行時に `hakoniwa_pdu_endpoint.dll` が見つからない
-
-環境変数を設定してください：
-
-```powershell
-$env:HAKO_PDU_ENDPOINT_SHARED_LIB = "C:\hakoniwa\bin\hakoniwa_pdu_endpoint.dll"
-```
-
-または：
-
-```powershell
-$env:HAKO_PDU_ENDPOINT_LIB_DIR = "C:\hakoniwa\bin"
-```
-
-### Python: install 後も import できない
-
-install 先を `PYTHONPATH` に追加してください：
-
-```powershell
-$env:PYTHONPATH="C:\hakoniwa\share\hakoniwa-pdu-endpoint\python;$env:PYTHONPATH"
-```
+vcpkg で Boost をインストール済みか確認し、CMake 実行時に `-DCMAKE_TOOLCHAIN_FILE` で vcpkg の toolchain file を必ず指定してください。
 
 ---
 
@@ -244,5 +171,4 @@ $env:PYTHONPATH="C:\hakoniwa\share\hakoniwa-pdu-endpoint\python;$env:PYTHONPATH"
 
 - [vcpkg 公式リポジトリ](https://github.com/microsoft/vcpkg)
 - [vcpkg ドキュメント](https://learn.microsoft.com/vcpkg/)
-- [hakoniwa-pdu-endpoint](https://github.com/hakoniwalab/hakoniwa-pdu-endpoint)
 - [hakoniwa-mujoco-robots](https://github.com/hakoniwalab/hakoniwa-mujoco-robots)
