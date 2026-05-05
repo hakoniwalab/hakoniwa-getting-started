@@ -301,6 +301,16 @@ Godot の再生ボタンを押してシーンを起動します。
 
 ---
 
+## 参考: 完成イメージ動画
+
+最終的にうまく連携できると、`tb3-demo.bash` で起動した TurtleBot3 が Godot 上でこのように描画されます。
+
+[![TurtleBot3 demo video](https://img.youtube.com/vi/sCWhi5JLmdE/0.jpg)](https://www.youtube.com/watch?v=sCWhi5JLmdE)
+
+> YouTube: https://www.youtube.com/watch?v=sCWhi5JLmdE
+
+---
+
 ## Step 8: ゲームパッドで操作する
 
 ゲームパッドのスティックを動かすと、Godot 上の TurtleBot3 が動きます。  
