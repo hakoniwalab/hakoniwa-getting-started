@@ -1,0 +1,33 @@
+Step 15 final summary
+
+Overall result:
+- The TB3 pipeline in docs/add-your-robot.md was exercised step by step.
+- Core generated assets were reproduced successfully.
+- Several real issues were found and fixed in ../hakoniwa-mbody-registry.
+
+Reproduced exactly or effectively:
+- GLB parts: exact binary match
+- robot_sync.profile.json: exact match
+- endpoint_shm_poll_with_pdu.json: exact match after fixes and staging options
+- tb3-pdutypes.json: content match, formatting differs only
+- tb3-pdudef-compact.json: content match, formatting differs only
+
+Partially reproduced:
+- TurtleBot3.generated.tscn
+  - runtime structure is now aligned with the template design
+  - remaining differences are non-functional/editor-oriented metadata or intentional scope differences
+- tb3_reference_sync.gd
+  - functionally aligned
+  - generated version includes an intentional null-guard improvement
+
+Fixes applied in ../hakoniwa-mbody-registry:
+- tools/godot_sync2endpoint.py
+- bodies/turtlebot3/config/godot_sync.yaml
+- tools/hako_godot_scene_gen.py
+- docs/spec/godot-scene-spec.md
+- bodies/turtlebot3/config/godot_scene.yaml
+
+Remaining follow-up items:
+- Update docs/add-your-robot.md to explain canonical generated names vs template-side staged names
+- Optionally normalize JSON formatting if exact text reproduction is desired
+- Decide whether .tscn should pursue closer textual reproduction or stop at functional/template-structure compatibility

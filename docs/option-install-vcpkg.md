@@ -1,8 +1,8 @@
-# ソースからビルドする（開発者向け）— Windows
+# 開発環境のセットアップ — vcpkg / GLFW / Boost / hakoniwa-pdu-endpoint（Windows）
 
 このドキュメントでは、Windows native 環境で箱庭関連プロジェクトをソースからビルドするために必要な、vcpkg・GLFW・Boost・hakoniwa-pdu-endpoint のセットアップ手順を説明します。
 
-> 💡 ビルド不要でまず動かしたい方は [quick-start.md](./quick-start-win.md) を参照してください。
+> 💡 ビルド不要でまず動かしたい方は [quick-start-win.md](./quick-start-win.md) を参照してください。
 
 ---
 

@@ -1,0 +1,15 @@
+Step 5 actuator result
+
+Command:
+/Users/tmori/project/oss/hakoniwa-getting-started/work/venv/bin/python tools/mjcf_add_actuators.py bodies/turtlebot3/generated/turtlebot3_burger.xml bodies/turtlebot3/config/actuators.yaml
+
+Workdir:
+/Users/tmori/project/oss/hakoniwa-mbody-registry
+
+Result:
+- Success
+- Output: ../hakoniwa-mbody-registry/bodies/turtlebot3/generated/turtlebot3_burger.actuated.xml
+
+Observation:
+- actuator YAML joint names matched MJCF joint names.
+- Generated actuator section contains left_motor and right_motor.

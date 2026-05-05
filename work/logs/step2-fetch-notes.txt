@@ -1,0 +1,15 @@
+Step 2 fetch result
+
+Command:
+/Users/tmori/project/oss/hakoniwa-getting-started/work/venv/bin/python tools/fetch.py sources/tb3.yaml
+
+Workdir:
+/Users/tmori/project/oss/hakoniwa-mbody-registry
+
+Result:
+- Success
+- Destination: ../hakoniwa-mbody-registry/bodies/turtlebot3/source
+- Key fetched path: turtlebot3_description/urdf/turtlebot3_burger.urdf
+
+Notes:
+- Running with work/venv was required because the host python3 environment did not have the required PyYAML package installed.

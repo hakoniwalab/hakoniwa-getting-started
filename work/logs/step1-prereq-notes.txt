@@ -1,0 +1,22 @@
+Step 1 prereq check
+
+Environment:
+- python3: 3.12.3
+- pip3: pip 25.1.1 for python 3.10
+- git: found
+- python3: found
+- pip3: found
+- mujoco CLI: not found in PATH
+
+hakoniwa-mbody-registry requirements.txt:
+- xacro
+- PyYAML
+- mujoco
+- trimesh
+- hakoniwa-pdu
+- hakoniwa-pdu-endpoint
+
+Observation:
+- There is a python/pip mismatch: python3 points to 3.12.3 but pip3 points to a Python 3.10 site-packages path.
+- The README uses `python3 -m pip install -r requirements.txt` in places, which is safer than bare `pip install -r requirements.txt`.
+- Additional prereq risk remains until actual imports and later tool runs are verified.

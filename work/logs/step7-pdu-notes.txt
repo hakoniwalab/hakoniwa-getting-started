@@ -1,0 +1,23 @@
+Step 7 PDU generation result
+
+Commands:
+/Users/tmori/project/oss/hakoniwa-getting-started/work/venv/bin/python tools/pdu_manifest2types.py bodies/turtlebot3/config/pdu-manifest.yaml
+/Users/tmori/project/oss/hakoniwa-getting-started/work/venv/bin/python tools/pdu_manifest2def.py bodies/turtlebot3/config/pdu-manifest.yaml
+
+Workdir:
+/Users/tmori/project/oss/hakoniwa-mbody-registry
+
+Result:
+- Success
+- Output: ../hakoniwa-mbody-registry/bodies/turtlebot3/generated/pdutypes.json
+- Output: ../hakoniwa-mbody-registry/bodies/turtlebot3/generated/pdu_def.json
+
+Comparison against template:
+- pdutypes content matches tb3-pdutypes.json in substance.
+- pdu_def content matches tb3-pdudef-compact.json in structure and robot name.
+- One naming/path difference exists:
+  - generated pdu_def.json points to `pdutypes.json`
+  - template tb3-pdudef-compact.json points to `tb3-pdutypes.json`
+
+Observation:
+- This appears to be a staging/naming convention difference rather than a schema mismatch.
