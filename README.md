@@ -1,3 +1,5 @@
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/hakoniwalab/hakoniwa-getting-started)
+
 # 箱庭 (Hakoniwa) — はじめよう
 
 > 箱庭エコシステムへの入口
